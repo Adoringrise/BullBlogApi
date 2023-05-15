@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using BullBlogApi.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace BullBlogApi.Data
 {

@@ -1,28 +1,29 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.IdentityModel.Tokens;
 
 namespace BullBlogApi.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class PostController : ControllerBase
+    public class PostsController : ControllerBase
     {
         private readonly DataContext _context;
-        public PostController(DataContext context)
+        public PostsController(DataContext context)
         {
             _context = context;
         }
         [HttpGet("{email}")]
         public async Task<ActionResult<List<Post>>> Get(string email)
         {
-            var post = await _context.Posts.Where(p => p.UserEmail == email).ToListAsync();
+            var posts = await _context.Posts.Where(p => p.UserEmail == email).ToListAsync();
 
-            if (post == null)
+            if (posts.IsNullOrEmpty())
             {
-                return BadRequest("Post not found");
+                return NotFound("Post not found");
             }
 
-            return Ok(post);
+            return Ok(posts);
         }
 
         [HttpGet("{email}/last")]
@@ -32,7 +33,7 @@ namespace BullBlogApi.Controllers
 
             if (post == null)
             {
-                return BadRequest("Post not found");
+                return NotFound("Post not found");
             }
 
             return Ok(post);
@@ -40,13 +41,13 @@ namespace BullBlogApi.Controllers
 
 
         [HttpPost]
-        public async Task<ActionResult<List<Post>>> AddPost(Post post)
+        public async Task<ActionResult<Post>> AddPost(Post post)
         {
-            _context.Posts.Add(post);
+            var dbPost = _context.Posts.Add(post);
 
             await _context.SaveChangesAsync();
 
-            return Ok(await _context.Posts.ToListAsync());
+            return Ok(dbPost);
         }
     }
 }

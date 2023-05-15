@@ -1,5 +1,6 @@
 global using BullBlogApi.Data;
 global using Microsoft.EntityFrameworkCore;
+using BullBlogApi.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -12,6 +13,7 @@ builder.Services.AddDbContext<DataContext>(options => {
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+builder.Services.AddTransient<IRepositoryService, RepositoryServiceSql>();
 
 var app = builder.Build();
 

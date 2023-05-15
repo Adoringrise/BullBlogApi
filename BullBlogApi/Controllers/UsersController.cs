@@ -1,4 +1,6 @@
-﻿using BullBlogApi.Models;
+﻿using BullBlogApi.Dtos;
+using BullBlogApi.Models;
+using BullBlogApi.Services;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -8,17 +10,17 @@ namespace BullBlogApi.Controllers
     [ApiController]
     public class UsersController : ControllerBase
     {
-        private readonly DataContext _context;
-        public UsersController(DataContext context) 
+        private readonly IRepositoryService _repositoryService;
+
+        public UsersController(IRepositoryService repositoryService)
         {
-            _context = context;
+            _repositoryService = repositoryService;
         }
 
         [HttpPost]
         public async Task<ActionResult<User>> AddUser(User user)
         {
-            var dbUser = _context.Users.Add(user);
-            await _context.SaveChangesAsync();
+            var dbUser = await _repositoryService.AddUserAsync(user);
 
             return Ok(dbUser);
         }

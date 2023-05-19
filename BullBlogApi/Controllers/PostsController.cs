@@ -1,4 +1,6 @@
-﻿using BullBlogApi.Models;
+﻿using BullBlogApi.Dtos;
+using BullBlogApi.Models;
+using BullBlogApi.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
 
@@ -8,28 +10,30 @@ namespace BullBlogApi.Controllers
     [ApiController]
     public class PostsController : ControllerBase
     {
-        private readonly DataContext _context;
-        public PostsController(DataContext context)
+        private readonly IRepositoryService _repositoryService;
+        public PostsController(IRepositoryService repositoryService)
         {
-            _context = context;
+            _repositoryService = repositoryService;
         }
+
+
         [HttpGet("{email}")]
         public async Task<ActionResult<List<Post>>> Get(string email)
         {
-            var posts = await _context.Posts.Where(p => p.UserEmail == email).ToListAsync();
+            var dbPost = await _repositoryService.GetPostAsync(email);
 
-            if (posts.IsNullOrEmpty())
+            if (dbPost.IsNullOrEmpty())
             {
                 return NotFound("Post not found");
             }
 
-            return Ok(posts);
+            return Ok(dbPost);
         }
 
         [HttpGet("{email}/last")]
         public async Task<ActionResult<Post>> GetLast(string email)
         {
-            var post = await _context.Posts.OrderByDescending(p => p.Id).Where(p => p.UserEmail == email).LastAsync();
+            var post = await _repositoryService.GetLastPostAsync(email);
 
             if (post == null)
             {
@@ -41,11 +45,9 @@ namespace BullBlogApi.Controllers
 
 
         [HttpPost]
-        public async Task<ActionResult<Post>> AddPost(Post post)
+        public async Task<ActionResult<Post>> AddPost(PostDto postDto)
         {
-            var dbPost = _context.Posts.Add(post);
-
-            await _context.SaveChangesAsync();
+            var dbPost = await _repositoryService.AddPostAsync(postDto);
 
             return Ok(dbPost);
         }

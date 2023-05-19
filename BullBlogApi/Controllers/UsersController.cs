@@ -18,9 +18,9 @@ namespace BullBlogApi.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult<User>> AddUser(User user)
+        public async Task<ActionResult<User>> AddUser(UserDto userDto)
         {
-            var dbUser = await _repositoryService.AddUserAsync(user);
+            var dbUser = await _repositoryService.AddUserAsync(userDto);
 
             return Ok(dbUser);
         }

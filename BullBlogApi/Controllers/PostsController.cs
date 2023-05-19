@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using BullBlogApi.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
 

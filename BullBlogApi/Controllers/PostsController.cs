@@ -18,9 +18,9 @@ namespace BullBlogApi.Controllers
 
 
         [HttpGet("{email}")]
-        public async Task<ActionResult<List<Post>>> Get(string email)
+        public async Task<ActionResult<List<PostDto>>> Get(string email)
         {
-            var dbPost = await _repositoryService.GetPostAsync(email);
+            var dbPost = await _repositoryService.GetPostsAsync(email);
 
             if (dbPost.IsNullOrEmpty())
             {
@@ -31,7 +31,7 @@ namespace BullBlogApi.Controllers
         }
 
         [HttpGet("{email}/last")]
-        public async Task<ActionResult<Post>> GetLast(string email)
+        public async Task<ActionResult<PostDto>> GetLast(string email)
         {
             var post = await _repositoryService.GetLastPostAsync(email);
 
@@ -45,7 +45,7 @@ namespace BullBlogApi.Controllers
 
 
         [HttpPost]
-        public async Task<ActionResult<Post>> AddPost(PostDto postDto)
+        public async Task<ActionResult<PostDto>> AddPost(PostDto postDto)
         {
             var dbPost = await _repositoryService.AddPostAsync(postDto);
 

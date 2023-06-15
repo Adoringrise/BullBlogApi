@@ -19,7 +19,7 @@ public class RepositoryServiceSql : IRepositoryService
         _mapper = mapper;
     }
 
-    public async Task<User> AddUserAsync(UserDto userDto)
+    public async Task<UserDto> AddUserAsync(UserDto userDto)
     {
         var dbUser = _mapper.Map<User>(userDto);
 
@@ -27,10 +27,12 @@ public class RepositoryServiceSql : IRepositoryService
 
         await _context.SaveChangesAsync();
         
-        return dbUser;
+        var dtoUser = _mapper.Map<UserDto>(dbUser);
+
+        return dtoUser;
     }
 
-    public async Task<Post> AddPostAsync(PostDto postDto)
+    public async Task<PostDto> AddPostAsync(PostDto postDto)
     {
         var dbPost = _mapper.Map<Post>(postDto);
 
@@ -38,21 +40,27 @@ public class RepositoryServiceSql : IRepositoryService
 
         await _context.SaveChangesAsync();
 
-        return dbPost;
+        var dtoPost = _mapper.Map<PostDto>(postDto);
+
+        return dtoPost;
     }
 
 
-    public async Task<List<Post>> GetPostAsync(string email)
+    public async Task<List<PostDto>> GetPostsAsync(string email)
     {
         var dbPost = await _context.Posts.Where(p => p.UserEmail == email).ToListAsync();
+        
+        var dtoPosts = _mapper.Map<List<Post>, List<PostDto>>(dbPost);
 
-        return dbPost;
+        return dtoPosts;
     }
 
-    public async Task<Post> GetLastPostAsync(string email)
+    public async Task<PostDto> GetLastPostAsync(string email)
     {
         var dbPost = await _context.Posts.OrderByDescending(p => p.Id).Where(p => p.UserEmail == email).LastAsync();
 
-        return dbPost;
+        var dtoPost = _mapper.Map<PostDto>(dbPost);
+
+        return dtoPost;
     }
 }

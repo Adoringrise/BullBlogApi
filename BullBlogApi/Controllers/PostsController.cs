@@ -17,39 +17,98 @@ namespace BullBlogApi.Controllers
         }
 
 
+        [HttpGet()]
+        public async Task<ActionResult<List<PostDto>>> Get()
+        {
+            try
+            {
+                var dbPosts = await _repositoryService.GetAllPostsAsync();
+
+                if (dbPosts.IsNullOrEmpty())
+                {
+                    return NotFound("Posts not found");
+                }
+
+                return Ok(dbPosts);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex);
+                return new StatusCodeResult(StatusCodes.Status500InternalServerError);
+            }
+        }
+
+
         [HttpGet("{email}")]
         public async Task<ActionResult<List<PostDto>>> Get(string email)
         {
-            var dbPost = await _repositoryService.GetPostsAsync(email);
-
-            if (dbPost.IsNullOrEmpty())
+            if (email == null || !email.Contains("@"))
             {
-                return NotFound("Post not found");
+                return BadRequest("email can't be empty");
             }
 
-            return Ok(dbPost);
+            try
+            {
+                var dbPosts = await _repositoryService.GetPostsAsync(email);
+
+                if (dbPosts.IsNullOrEmpty())
+                {
+                    return NotFound("Post not found");
+                }
+
+                return Ok(dbPosts);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex);
+                return new StatusCodeResult(StatusCodes.Status500InternalServerError);
+            }
+
         }
 
         [HttpGet("{email}/last")]
         public async Task<ActionResult<PostDto>> GetLast(string email)
         {
-            var post = await _repositoryService.GetLastPostAsync(email);
-
-            if (post == null)
+            if (email == null || !email.Contains("@"))
             {
-                return NotFound("Post not found");
+                return BadRequest("email can't be empty");
             }
 
-            return Ok(post);
+            try
+            {
+                var dbPost = await _repositoryService.GetLastPostAsync(email);
+
+                if (dbPost == null)
+                {
+                    return NotFound("Post not found");
+                }
+
+                return Ok(dbPost);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex);
+                return new StatusCodeResult(StatusCodes.Status500InternalServerError);
+            }
+
         }
 
 
         [HttpPost]
         public async Task<ActionResult<PostDto>> AddPost(PostDto postDto)
         {
-            var dbPost = await _repositoryService.AddPostAsync(postDto);
+            try
+            {
+                var dbPost = await _repositoryService.AddPostAsync(postDto);
 
-            return Ok(dbPost);
+                return Ok(dbPost);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex);
+                return new StatusCodeResult(StatusCodes.Status500InternalServerError);
+            }
+
         }
     }
 }

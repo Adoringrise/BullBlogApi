@@ -18,6 +18,14 @@ public class RepositoryServiceSql : IRepositoryService
 
         _mapper = mapper;
     }
+    public async Task<List<UserDto>> GetUsersAsync()
+    {
+        var dbUsers =  await _context.Users.ToListAsync();
+
+        var dtoUsers = _mapper.Map<List<User>, List<UserDto>>(dbUsers);
+
+        return dtoUsers;
+    }
 
     public async Task<UserDto> AddUserAsync(UserDto userDto)
     {
@@ -30,6 +38,36 @@ public class RepositoryServiceSql : IRepositoryService
         var dtoUser = _mapper.Map<UserDto>(dbUser);
 
         return dtoUser;
+    }
+
+    public async Task<UserDto> UpdateUserAsync(UserDto userDto)
+    {
+        var dbUser = await _context.Users.FindAsync(userDto);
+
+         dbUser = _mapper.Map<User>(userDto);
+
+        
+
+       
+        dbUser = _context.Users.Update(dbUser).Entity;
+
+        dbUser = _context.Users.Add(dbUser).Entity;
+
+        await _context.SaveChangesAsync();
+
+        var dtoUser = _mapper.Map<UserDto>(dbUser);
+
+        return dtoUser;
+    }
+
+
+    public async Task<List<PostDto>> GetAllPostsAsync()
+    {
+        var dbPost = await _context.Posts.ToListAsync();
+
+        var dtoPost = _mapper.Map<List<Post>, List<PostDto>>(dbPost);
+
+        return dtoPost;
     }
 
     public async Task<PostDto> AddPostAsync(PostDto postDto)
@@ -62,5 +100,14 @@ public class RepositoryServiceSql : IRepositoryService
         var dtoPost = _mapper.Map<PostDto>(dbPost);
 
         return dtoPost;
+    }
+
+    public async Task<List<UserDto>> GetAllUsersAsync()
+    {
+        var dbUser = await _context.Users.ToListAsync();
+
+        var dtoUser = _mapper.Map<List<User>, List<UserDto>>(dbUser);
+
+        return dtoUser;
     }
 }

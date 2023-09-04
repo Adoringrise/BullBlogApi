@@ -1,4 +1,5 @@
 ﻿using BullBlogApi.Models;
+using System.ComponentModel.DataAnnotations;
 
 namespace BullBlogApi.Dtos
 {
